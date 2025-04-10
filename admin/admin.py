@@ -1,34 +1,39 @@
-from flask import Flask, render_template, request, redirect
-import json, os
-import string, random
+from flask import Flask, render_template, request, redirect, url_for
+import json, os, uuid
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
-STORE_PATH = os.path.join("../shared", "storage.json")
+app = Flask(__name__)
+DATA_FILE = "../shared/storage.json"
 
-def generate_id():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f)
 
 @app.route("/", methods=["GET", "POST"])
-def form():
+def index():
     if request.method == "POST":
-        tokens = request.form.getlist("token")
-        seats = request.form.getlist("seat")
-        event = request.form.get("event")
-        date = request.form.get("date")
-
-        new_id = generate_id()
-
-        with open(STORE_PATH, "r") as f:
-            data = json.load(f)
-
-        data[new_id] = [
-            {"token": t, "seat": s, "event": event, "date": date}
-            for t, s in zip(tokens, seats)
-        ]
-
-        with open(STORE_PATH, "w") as f:
-            json.dump(data, f)
-
-        return f"Ticket link: https://mypassdelivery.com/ticket/{new_id}"
-
+        form = request.form
+        ticket = {
+            "event": form["event"],
+            "date": form["date"],
+            "venue": form["venue"],
+            "section": form["section"],
+            "row": form["row"],
+            "seat": form["seat"],
+            "token": form["token"]
+        }
+        data = load_data()
+        ticket_id = str(uuid.uuid4())[:8]
+        data[ticket_id] = ticket
+        save_data(data)
+        return redirect(f"https://mypassticket.onrender.com/ticket/{ticket_id}")
     return render_template("form.html")
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
