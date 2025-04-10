@@ -1,54 +1,45 @@
+<!-- viewer/templates/ticket.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>{{ ticket.event }} | Ticket</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <script src="{{ url_for('static', filename='scanline.js') }}"></script>
-  <script src="{{ url_for('static', filename='dots.js') }}"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ticket</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    .card { display: none; border: 1px solid #ccc; padding: 20px; margin: auto; width: 300px; }
+    .card.active { display: block; }
+  </style>
+  <script>
+    let current = 0;
+    function show(index) {
+      const cards = document.querySelectorAll(".card");
+      cards.forEach((c, i) => c.classList.toggle("active", i === index));
+    }
+    function next() {
+      current = (current + 1) % document.querySelectorAll(".card").length;
+      show(current);
+    }
+    function prev() {
+      current = (current - 1 + document.querySelectorAll(".card").length) % document.querySelectorAll(".card").length;
+      show(current);
+    }
+    window.onload = () => {
+      show(0);
+      setInterval(next, 15000);
+    };
+  </script>
 </head>
 <body>
-  <div class="ticket-container">
-    <div class="header">
-      <h1>{{ ticket.event }}</h1>
-      <p>{{ ticket.venue }}</p>
-      <p>{{ ticket.date }}</p>
+  <h1>Your Tickets</h1>
+  {% for ticket in tickets %}
+    <div class="card">
+      <h3>{{ ticket.event }}</h3>
+      <p>{{ ticket.date }} at {{ ticket.venue }}</p>
+      <p>Section {{ ticket.section }}, Row {{ ticket.row }}, Seat {{ ticket.seat }}</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={{ ticket.token }}">
     </div>
-
-    <div class="barcode">
-      <div class="scanline"></div>
-      <img id="barcode-img" src="/barcode/{{ ticket_id }}?index={{ index }}">
-    </div>
-
-    <div class="details">
-      <span>Section: {{ ticket.section }}</span>
-      <span>Row: {{ ticket.row }}</span>
-      <span>Seat: {{ ticket.seat }}</span>
-    </div>
-
-    {% if total > 1 %}
-    <div class="dots">
-      {% for i in range(total) %}
-        <span class="dot {% if i == index %}active{% endif %}" onclick="goTo({{ i }})"></span>
-      {% endfor %}
-    </div>
-    {% endif %}
-  </div>
-
-  <script>
-    const id = "{{ ticket_id }}";
-    let index = parseInt("{{ index }}");
-    const total = {{ total }};
-    const barcode = document.getElementById("barcode-img");
-
-    setInterval(() => {
-      barcode.src = `/barcode/${id}?index=${index}&t=${Date.now()}`;
-    }, 15000);
-
-    function goTo(i) {
-      window.location.href = `/ticket/${id}?index=${i}`;
-    }
-  </script>
+  {% endfor %}
+  <br>
+  <button onclick="prev()">Prev</button>
+  <button onclick="next()">Next</button>
 </body>
 </html>

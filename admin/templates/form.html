@@ -1,54 +1,20 @@
+<!-- admin/templates/form.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Create Tickets</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 30px;
-      max-width: 600px;
-      margin: auto;
-      background: #f4f4f4;
-    }
-    h2 {
-      text-align: center;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 1rem;
-    }
-    button {
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #004999;
-    }
-    .note {
-      font-size: 0.9rem;
-      color: #555;
-    }
-  </style>
 </head>
 <body>
-  <h2>🎫 Tạo Vé Ticketmaster</h2>
-
+  <h1>Create Ticket</h1>
   <form method="POST">
-    <input type="text" name="event" placeholder="🎤 Tên sự kiện (Event)" required />
-    <input type="text" name="venue" placeholder="📍 Địa điểm (Venue)" required />
-    <input type="text" name="date" placeholder="🗓 Ngày giờ (e.g. April 12, 2025 - 8:00PM)" required />
-    <input type="text" name="section" placeholder="📌 Khu vực (Section)" required />
-    <input type="text" name="row" placeholder="📏 Hàng (Row)" required />
-    <input type="text" name="seats" placeholder="💺 Ghế (vd: 1,2,3,4)" required />
-    <textarea name="tokens" rows="5" placeholder="🔐 Nhập token thô, ngăn cách bởi dấu phẩy (,) hoặc dòng mới" required></textarea>
-    <p class="note">🔁 Mỗi ghế tương ứng một token. Nếu bạn nhập 4 ghế, cần 4 token tương ứng.</p>
-    <button type="submit">🚀 Tạo Vé</button>
+    <input name="event" placeholder="Event Name" required><br>
+    <input name="venue" placeholder="Venue" required><br>
+    <input type="datetime-local" name="date" required><br>
+    <input name="section" placeholder="Section" required><br>
+    <input name="row" placeholder="Row" required><br>
+    <input name="seat" placeholder="Seat numbers (comma)" required><br>
+    <textarea name="token" placeholder="One token per line" required></textarea><br>
+    <button type="submit">Submit</button>
   </form>
 </body>
 </html>

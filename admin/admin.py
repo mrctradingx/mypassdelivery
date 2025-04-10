@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, jsonify
-import os, uuid, json
+# admin/admin.py
+from flask import Flask, render_template, request, redirect
+import json, os, uuid
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 DATA_FILE = "../shared/storage.json"
 
 def load_data():
@@ -18,34 +21,43 @@ def save_data(data):
 def index():
     if request.method == "POST":
         form = request.form
-        seats = [s.strip() for s in form["seats"].split(",")]
-        tokens = [t.strip() for t in form["tokens"].replace("\r", "").split("\n") if t.strip()]
-        
-        if len(seats) != len(tokens):
-            return "Số ghế và số token không khớp", 400
-
-        booking_id = str(uuid.uuid4())[:8]
+        tokens = [t.strip() for t in form["token"].splitlines() if t.strip()]
+        seats = [s.strip() for s in form["seat"].split(",") if s.strip()]
+        if len(tokens) != len(seats):
+            return "❌ Token và ghế phải khớp 1-1", 400
         data = load_data()
-        for i in range(len(seats)):
-            ticket_id = f"{booking_id}_{i+1}"
+        booking_id = str(uuid.uuid4())[:8]
+        for token, seat in zip(tokens, seats):
+            ticket_id = str(uuid.uuid4())[:8]
             data[ticket_id] = {
                 "event": form["event"],
-                "venue": form["venue"],
                 "date": form["date"],
+                "venue": form["venue"],
                 "section": form["section"],
                 "row": form["row"],
-                "seat": seats[i],
-                "token": tokens[i],
+                "seat": seat,
+                "token": token,
                 "booking_id": booking_id
             }
         save_data(data)
-        return redirect(f"https://mypassticket.onrender.com/ticket/{booking_id}")
+        return redirect(f"https://mypassticket.onrender.com/booking/{booking_id}")
     return render_template("form.html")
 
 @app.route("/api/tickets/<ticket_id>")
 def get_ticket_json(ticket_id):
     data = load_data()
-    ticket = {k: v for k, v in data.items() if v.get("booking_id") == ticket_id}
+    ticket = data.get(ticket_id)
     if not ticket:
-        return jsonify({"error": "Not found"}), 404
-    return jsonify(ticket)
+        return {"error": "Not found"}, 404
+    return ticket
+
+@app.route("/api/booking/<booking_id>")
+def get_booking_json(booking_id):
+    data = load_data()
+    tickets = [v | {"ticket_id": k} for k, v in data.items() if v.get("booking_id") == booking_id]
+    return tickets if tickets else {"error": "Not found"}, 404
+
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

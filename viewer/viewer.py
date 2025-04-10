@@ -1,52 +1,18 @@
 # viewer/viewer.py
-from flask import Flask, render_template, send_file, request
-import requests, io
-import pdf417gen
-from PIL import Image
-import os
+from flask import Flask, render_template
+import requests, os
 
 app = Flask(__name__)
 
-ADMIN_API = os.environ.get("ADMIN_API", "https://admin.mypassdelivery.com")
+@app.route("/booking/<booking_id>")
+def show_booking(booking_id):
+    api_url = f"https://admin.mypassdelivery.com/api/booking/{booking_id}"
+    response = requests.get(api_url)
+    if response.status_code != 200:
+        return "❌ Booking not found", 404
+    tickets = response.json()
+    return render_template("ticket.html", tickets=tickets)
 
-@app.route("/ticket/<ticket_id>")
-def show_ticket(ticket_id):
-    index = int(request.args.get("index", 0))
-    # Call API from admin
-    try:
-        res = requests.get(f"{ADMIN_API}/api/tickets/{ticket_id}")
-        data = res.json()
-    except Exception:
-        return "Error fetching ticket", 500
-
-    if "tokens" not in data or index >= len(data["tokens"]):
-        return "Not Found", 404
-
-    ticket = {
-        "event": data.get("event", ""),
-        "venue": data.get("venue", ""),
-        "date": data.get("date", ""),
-        "section": data.get("section", ""),
-        "row": data.get("row", ""),
-        "seat": data.get("seats")[index],
-        "token": data["tokens"][index]
-    }
-
-    return render_template("ticket.html", ticket=ticket, ticket_id=ticket_id, index=index, total=len(data["tokens"]))
-
-@app.route("/barcode/<ticket_id>")
-def generate_barcode(ticket_id):
-    index = int(request.args.get("index", 0))
-    try:
-        res = requests.get(f"{ADMIN_API}/api/tickets/{ticket_id}")
-        data = res.json()
-        raw_token = data["tokens"][index]
-    except Exception:
-        return "Bad token", 400
-
-    codes = pdf417gen.encode(raw_token, columns=6, security_level=5)
-    image = pdf417gen.render_image(codes)  # PIL image
-    buf = io.BytesIO()
-    image.save(buf, format="PNG")
-    buf.seek(0)
-    return send_file(buf, mimetype="image/png")
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
