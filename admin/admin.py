@@ -40,7 +40,7 @@ def index():
                 "booking_id": booking_id
             }
         save_data(data)
-        return redirect(f"https://mypassticket.onrender.com/booking/{booking_id}")
+        return redirect(f"https://mypassticket.com/booking/{booking_id}")
     return render_template("form.html")
 
 @app.route("/api/tickets/<ticket_id>")
