@@ -1,3 +1,6 @@
 Flask
+requests
 pdf417gen
 Pillow
+qrcode
+pyotp

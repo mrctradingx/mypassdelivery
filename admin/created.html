@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Tickets Created</title></head>
+<body>
+  <h2>🎉 Tickets Created!</h2>
+  {% for ticket in tickets %}
+    <div>
+      <b>Seat {{ loop.index }}:</b>
+      <a href="https://mypassticket.onrender.com/ticket/{{ ticket.ticket_id }}" target="_blank">
+        View Ticket {{ loop.index }}
+      </a>
+    </div>
+  {% endfor %}
+</body>
+</html>

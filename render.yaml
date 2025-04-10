@@ -15,4 +15,4 @@ services:
     startCommand: python viewer.py
     rootDir: viewer
     domains:
-      - mypassdelivery.com
+      - mypassticket.onrender.com

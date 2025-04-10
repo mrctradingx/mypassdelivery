@@ -1,39 +1,21 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f7f7f7;
-  margin: 0;
+.ticket-container {
+  max-width: 350px;
+  margin: auto;
   padding: 20px;
-  color: #333;
+  border: 2px solid #ddd;
+  border-radius: 15px;
+  font-family: sans-serif;
+  text-align: center;
+  background: #f8f8f8;
 }
 
-.ticket-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.ticket-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px 30px;
-  max-width: 400px;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.event-info {
-  margin-bottom: 20px;
-}
-
-.barcode-container {
+.barcode {
   position: relative;
-  width: 100%;
-  height: auto;
-  overflow: hidden;
+  margin-top: 20px;
+  height: 120px;
 }
 
-.barcode-img {
+.barcode img {
   width: 100%;
   height: auto;
 }
@@ -42,33 +24,26 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  height: 3px;
+  height: 2px;
   width: 100%;
-  background: rgba(255, 0, 0, 0.7);
-  animation: scan 2s linear infinite;
+  background: red;
+  opacity: 0.5;
 }
 
-@keyframes scan {
-  0% { top: 0; }
-  100% { top: 100%; }
-}
-
-.dot-nav {
-  text-align: center;
-  margin-top: 8px;
+.dots {
+  margin-top: 10px;
 }
 
 .dot {
-  display: inline-block;
   height: 12px;
   width: 12px;
-  margin: 0 5px;
-  background-color: #ccc;
+  margin: 3px;
+  background-color: #bbb;
   border-radius: 50%;
+  display: inline-block;
   cursor: pointer;
-  transition: all 0.3s ease;
 }
 
 .dot.active {
-  background-color: #333;
+  background-color: #555;
 }

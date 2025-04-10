@@ -1,45 +1,22 @@
+<!-- form.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tạo vé</title>
-  <style>
-    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
-    label { display: block; margin-top: 10px; }
-    input[type="text"], input[type="datetime-local"] {
-      width: 100%; padding: 8px; margin-top: 5px;
-    }
-    button {
-      margin-top: 20px; padding: 10px 20px;
-      background: #2d89ef; color: white; border: none; cursor: pointer;
-    }
-  </style>
+  <title>🎟️ Tạo vé</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h2>Tạo Vé Sự Kiện</h2>
+  <h2>Tạo vé TicketMaster</h2>
   <form method="POST">
-    <label>Tên sự kiện</label>
-    <input type="text" name="event" required>
-
-    <label>Thời gian</label>
-    <input type="datetime-local" name="date" required>
-
-    <label>Địa điểm (venue)</label>
-    <input type="text" name="venue" required>
-
-    <label>Section</label>
-    <input type="text" name="section" required>
-
-    <label>Row</label>
-    <input type="text" name="row" required>
-
-    <label>Seat</label>
-    <input type="text" name="seat" required>
-
-    <label>Token (raw)</label>
-    <input type="text" name="token" required>
-
+    <input name="event" placeholder="Tên sự kiện" required>
+    <input name="venue" placeholder="Nơi diễn ra" required>
+    <input name="date" placeholder="Thời gian (VD: April 21, 2025 • 7:00 PM)" required>
+    <input name="section" placeholder="Section" required>
+    <input name="row" placeholder="Row" required>
+    <input name="seat_start" placeholder="Ghế bắt đầu (VD: 1)" required>
+    <textarea name="tokens" placeholder="Nhập mỗi rawToken trên 1 dòng" rows="6" required></textarea>
+    <input name="event_key" placeholder="eventKey" required>
+    <input name="customer_key" placeholder="customerKey" required>
     <button type="submit">Tạo vé</button>
   </form>
 </body>

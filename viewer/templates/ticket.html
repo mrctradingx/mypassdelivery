@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎟️ Your Ticket</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <meta charset="UTF-8">
+  <title>{{ ticket.event }} | Ticket</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='scanline.js') }}"></script>
+  <script src="{{ url_for('static', filename='dots.js') }}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <div class="ticket-wrapper">
-    <div class="ticket-card">
-      <div class="event-info">
-        <h2>{{ ticket.event_name }}</h2>
-        <p><strong>Date:</strong> {{ ticket.date }}</p>
-        <p><strong>Time:</strong> {{ ticket.time }}</p>
-        <p><strong>Section:</strong> {{ ticket.section }}</p>
-        <p><strong>Row:</strong> {{ ticket.row }}</p>
-        <p><strong>Seat:</strong> {{ ticket.seat }}</p>
-      </div>
-      <div class="barcode-container">
-        <img src="/barcode/{{ ticket.token }}" alt="Barcode" class="barcode-img" />
-        <div class="scanline"></div>
-      </div>
+  <div class="ticket-container">
+    <div class="header">
+      <h1>{{ ticket.event }}</h1>
+      <p>{{ ticket.venue }}</p>
+      <p>{{ ticket.date }}</p>
     </div>
 
-    <div class="dot-nav">
-      {% for token in all_tokens %}
-        <span class="dot {% if token == ticket.token %}active{% endif %}" data-href="/ticket/{{ token }}"></span>
+    <div class="barcode">
+      <div class="scanline"></div>
+      <img id="barcode-img" src="/barcode/{{ ticket_id }}?index={{ index }}">
+    </div>
+
+    <div class="details">
+      <span>Section: {{ ticket.section }}</span>
+      <span>Row: {{ ticket.row }}</span>
+      <span>Seat: {{ ticket.seat }}</span>
+    </div>
+
+    {% if total > 1 %}
+    <div class="dots">
+      {% for i in range(total) %}
+        <span class="dot {% if i == index %}active{% endif %}" onclick="goTo({{ i }})"></span>
       {% endfor %}
     </div>
+    {% endif %}
   </div>
 
-  <script src="/static/scanline.js"></script>
-  <script src="/static/dots.js"></script>
+  <script>
+    const id = "{{ ticket_id }}";
+    let index = parseInt("{{ index }}");
+    const total = {{ total }};
+    const barcode = document.getElementById("barcode-img");
+
+    setInterval(() => {
+      barcode.src = `/barcode/${id}?index=${index}&t=${Date.now()}`;
+    }, 15000);
+
+    function goTo(i) {
+      window.location.href = `/ticket/${id}?index=${i}`;
+    }
+  </script>
 </body>
 </html>

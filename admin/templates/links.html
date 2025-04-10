@@ -1,0 +1,13 @@
+<!-- links.html -->
+<!DOCTYPE html>
+<html>
+<head><title>✅ Link vé</title></head>
+<body>
+<h3>✅ Các vé đã tạo:</h3>
+<ul>
+  {% for link in links %}
+  <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+  {% endfor %}
+</ul>
+</body>
+</html>
