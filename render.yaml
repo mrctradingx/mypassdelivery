@@ -1,16 +1,18 @@
 services:
   - type: web
-    name: ticketmaster-viewer
+    name: ticket-admin
     env: python
-    buildCommand: ""
-    startCommand: python viewer/viewer.py
-    plan: free
-    envVars: []
+    buildCommand: pip install -r requirements.txt
+    startCommand: python admin.py
+    rootDir: admin
+    domains:
+      - admin.mypassdelivery.com
 
   - type: web
-    name: ticketmaster-admin
+    name: ticket-viewer
     env: python
-    buildCommand: ""
-    startCommand: python admin/admin.py
-    plan: free
-    envVars: []
+    buildCommand: pip install -r requirements.txt
+    startCommand: python viewer.py
+    rootDir: viewer
+    domains:
+      - mypassdelivery.com

@@ -1,41 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Vé của bạn</title>
-    <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎟️ Your Ticket</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-    <div id="ticket">
-        <img id="barcode" src="data:image/png;base64,{{ pages[0]['barcode'] }}">
-        <div id="info">
-            <h2>{{ pages[0]['event'] }}</h2>
-            <p>{{ pages[0]['date'] }} - Ghế {{ pages[0]['seat'] }}</p>
-        </div>
+  <div class="ticket-wrapper">
+    <div class="ticket-card">
+      <div class="event-info">
+        <h2>{{ ticket.event_name }}</h2>
+        <p><strong>Date:</strong> {{ ticket.date }}</p>
+        <p><strong>Time:</strong> {{ ticket.time }}</p>
+        <p><strong>Section:</strong> {{ ticket.section }}</p>
+        <p><strong>Row:</strong> {{ ticket.row }}</p>
+        <p><strong>Seat:</strong> {{ ticket.seat }}</p>
+      </div>
+      <div class="barcode-container">
+        <img src="/barcode/{{ ticket.token }}" alt="Barcode" class="barcode-img" />
+        <div class="scanline"></div>
+      </div>
     </div>
-    <div id="dots">
-        {% for _ in pages %}
-            <span class="dot" onclick="setPage({{ loop.index0 }})"></span>
-        {% endfor %}
+
+    <div class="dot-nav">
+      {% for token in all_tokens %}
+        <span class="dot {% if token == ticket.token %}active{% endif %}" data-href="/ticket/{{ token }}"></span>
+      {% endfor %}
     </div>
-    <script>
-        const pages = {{ pages|tojson }};
-        let idx = 0;
+  </div>
 
-        function setPage(i) {
-            idx = i;
-            update();
-        }
-
-        function update() {
-            const p = pages[idx];
-            document.getElementById("barcode").src = "data:image/png;base64," + p.barcode;
-            document.getElementById("info").innerHTML = `<h2>${p.event}</h2><p>${p.date} - Ghế ${p.seat}</p>`;
-        }
-
-        setInterval(() => {
-            idx = (idx + 1) % pages.length;
-            update();
-        }, 15000);
-    </script>
+  <script src="/static/scanline.js"></script>
+  <script src="/static/dots.js"></script>
 </body>
 </html>
