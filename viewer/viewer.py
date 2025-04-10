@@ -1,34 +1,37 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, send_file
 import json, os
 import pdf417gen
 from PIL import Image
-from io import BytesIO
-import base64
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
-STORE_PATH = os.path.join("../shared", "storage.json")
+app = Flask(__name__)
+DATA_FILE = "../shared/storage.json"
 
-def generate_barcode_img(token):
-    codes = pdf417gen.encode(token, columns=6, security_level=5)
-    image = pdf417gen.render_image(codes)  # PIL Image
-    buffer = BytesIO()
-    image.save(buffer, format="PNG")
-    return base64.b64encode(buffer.getvalue()).decode()
+def load_data():
+    if not os.path.exists(DATA_FILE):
+        return {}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
 
 @app.route("/ticket/<ticket_id>")
 def ticket(ticket_id):
-    with open(STORE_PATH) as f:
-        data = json.load(f)
+    data = load_data()
+    ticket = data.get(ticket_id)
+    if not ticket:
+        return "Ticket not found", 404
+    return render_template("ticket.html", ticket=ticket, ticket_id=ticket_id)
 
-    if ticket_id not in data:
-        abort(404)
+@app.route("/barcode/<ticket_id>.png")
+def barcode(ticket_id):
+    data = load_data()
+    ticket = data.get(ticket_id)
+    if not ticket:
+        return "Not found", 404
+    code = pdf417gen.encode(ticket["token"])
+    image = pdf417gen.render_image(code, scale=3)
+    path = f"/tmp/{ticket_id}.png"
+    image.save(path)
+    return send_file(path, mimetype="image/png")
 
-    pages = [
-        {
-            **item,
-            "barcode": generate_barcode_img(item["token"])
-        }
-        for item in data[ticket_id]
-    ]
-
-    return render_template("ticket.html", pages=pages)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
