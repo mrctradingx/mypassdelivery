@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ticketmaster-viewer
+    env: python
+    buildCommand: ""
+    startCommand: python viewer/viewer.py
+    plan: free
+    envVars: []
+
+  - type: web
+    name: ticketmaster-admin
+    env: python
+    buildCommand: ""
+    startCommand: python admin/admin.py
+    plan: free
+    envVars: []

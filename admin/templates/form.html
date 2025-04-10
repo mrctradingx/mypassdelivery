@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tạo vé</title>
+</head>
+<body>
+    <h2>Nhập vé</h2>
+    <form method="POST">
+        <label>Sự kiện: <input name="event" required></label><br>
+        <label>Ngày: <input name="date" required></label><br><br>
+
+        <div id="entries">
+            <div>
+                <label>Token: <input name="token" required></label>
+                <label>Ghế: <input name="seat" required></label>
+            </div>
+        </div>
+
+        <button type="button" onclick="addEntry()">+ Thêm vé</button><br><br>
+        <button type="submit">Tạo link</button>
+    </form>
+
+    <script>
+        function addEntry() {
+            const div = document.createElement("div");
+            div.innerHTML = `<label>Token: <input name="token" required></label>
+                             <label>Ghế: <input name="seat" required></label>`;
+            document.getElementById("entries").appendChild(div);
+        }
+    </script>
+</body>
+</html>

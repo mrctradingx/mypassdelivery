@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vé của bạn</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="ticket">
+        <img id="barcode" src="data:image/png;base64,{{ pages[0]['barcode'] }}">
+        <div id="info">
+            <h2>{{ pages[0]['event'] }}</h2>
+            <p>{{ pages[0]['date'] }} - Ghế {{ pages[0]['seat'] }}</p>
+        </div>
+    </div>
+    <div id="dots">
+        {% for _ in pages %}
+            <span class="dot" onclick="setPage({{ loop.index0 }})"></span>
+        {% endfor %}
+    </div>
+    <script>
+        const pages = {{ pages|tojson }};
+        let idx = 0;
+
+        function setPage(i) {
+            idx = i;
+            update();
+        }
+
+        function update() {
+            const p = pages[idx];
+            document.getElementById("barcode").src = "data:image/png;base64," + p.barcode;
+            document.getElementById("info").innerHTML = `<h2>${p.event}</h2><p>${p.date} - Ghế ${p.seat}</p>`;
+        }
+
+        setInterval(() => {
+            idx = (idx + 1) % pages.length;
+            update();
+        }, 15000);
+    </script>
+</body>
+</html>

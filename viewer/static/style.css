@@ -1,0 +1,26 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+}
+#ticket {
+    margin-top: 40px;
+}
+#barcode {
+    width: 300px;
+    height: auto;
+}
+#dots {
+    margin-top: 20px;
+}
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background: gray;
+    cursor: pointer;
+}
+.dot.active {
+    background: black;
+}
